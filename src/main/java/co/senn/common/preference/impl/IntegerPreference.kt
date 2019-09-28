@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class IntegerPreference(name : String, def : Int) : Preference<Int>(name, def, { it.toString() }, { it.toInt() })
+class IntegerPreference(name : String, def : Int, validator : (Int) -> Boolean) : Preference<Int>(name, def, { it.toString() }, { it.toInt() }, validator) {
+	constructor(name : String, def : Int) : this(name, def, validAlways)
+}

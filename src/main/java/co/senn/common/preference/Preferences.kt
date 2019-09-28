@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -19,21 +19,48 @@
  */
 package co.senn.common.preference
 
+import co.senn.common.preference.exception.PreferenceValidationException
 import java.util.prefs.BackingStoreException
-import java.util.prefs.Preferences as JPreferences
+import java.util.prefs.Preferences as JavaPreferences
 
-class Preferences private constructor(private val preferences : JPreferences) {
+class Preferences private constructor(private val preferences : JavaPreferences) {
+	
+	private val uncommitted = HashMap<String, String>()
 	
 	fun <T> get(preference : Preference<T>) : T {
 		return preference.decoder.invoke(preferences.get(preference.name, preference.encodedDefault))
 	}
 	
 	fun <T> set(preference : Preference<T>, value : T) {
-		preferences.put(preference.name, preference.encoder.invoke(value))
+		synchronized(preferences) {
+			if (preference.validator.invoke(value)) {
+				preferences.put(preference.name, preference.encoder.invoke(value))
+			} else {
+				throw PreferenceValidationException(preference, value)
+			}
+		}
 	}
 	
 	@Throws(BackingStoreException::class)
 	fun flush() {
+		preferences.flush()
+	}
+	
+	fun tryFlush() = try {
+		preferences.flush()
+		true
+	} catch (e : BackingStoreException) {
+		false
+	}
+	
+	private fun rollback() {
+		uncommitted.clear()
+	}
+	
+	@Throws(BackingStoreException::class)
+	private fun commit() {
+		uncommitted.forEach(preferences::put)
+		uncommitted.clear()
 		preferences.flush()
 	}
 	
@@ -42,21 +69,37 @@ class Preferences private constructor(private val preferences : JPreferences) {
 		preferences.clear()
 	}
 	
+	@Throws(BackingStoreException::class)
+	fun transaction(block : () -> Unit) {
+		synchronized(preferences) {
+			val stash = HashMap<String, String>(uncommitted)
+			rollback()
+			try {
+				block()
+				commit()
+			} catch (t : Throwable) {
+				rollback()
+				throw t
+			}
+			uncommitted.putAll(stash)
+		}
+	}
+	
 	companion object {
 		fun systemNodeForPackage(clazz : Class<*>) : Preferences {
-			return Preferences(java.util.prefs.Preferences.systemNodeForPackage(clazz))
+			return Preferences(JavaPreferences.systemNodeForPackage(clazz))
 		}
 		
 		fun systemRoot() : Preferences {
-			return Preferences(java.util.prefs.Preferences.systemRoot())
+			return Preferences(JavaPreferences.systemRoot())
 		}
 		
 		fun userNodeForPackage(clazz : Class<*>) : Preferences {
-			return Preferences(java.util.prefs.Preferences.userNodeForPackage(clazz))
+			return Preferences(JavaPreferences.userNodeForPackage(clazz))
 		}
 		
 		fun userRoot() : Preferences {
-			return Preferences(java.util.prefs.Preferences.userRoot())
+			return Preferences(JavaPreferences.userRoot())
 		}
 	}
 	

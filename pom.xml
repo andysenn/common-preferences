@@ -14,7 +14,7 @@
 	<url>http://github.com/andysenn/common-preferences</url>
 
 	<properties>
-		<kotlin.version>1.2.30</kotlin.version>
+		<kotlin.version>1.3.50</kotlin.version>
 	</properties>
 
 	<licenses>

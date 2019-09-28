@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class StringPreference(name : String, def : String) : Preference<String>(name, def, { it }, { it })
+class StringPreference(name : String, def : String, validator : (String) -> Boolean) : Preference<String>(name, def, { it }, { it }, validator) {
+	constructor(name : String, def : String) : this(name, def, validAlways)
+}

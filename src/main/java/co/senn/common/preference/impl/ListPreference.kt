@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -25,11 +25,7 @@ class ListPreference<T>(
 		name : String,
 		def : Collection<T>,
 		encoder : (T) -> String,
-		decoder : (String) -> T
-) : Preference<Collection<T>>(name, def, { it.map(encoder).joinToString(DELIMITER) }, { it.split(DELIMITER).map(decoder) }) {
-	
-	companion object {
-		private val DELIMITER = "\u00A7\u00A7\u00A7\u00A7"
-	}
-	
-}
+		decoder : (String) -> T,
+		validator : (T) -> Boolean = { true },
+		delimiter : String = "\u00A7\u00A7\u00A7\u00A7"
+) : Preference<Collection<T>>(name, def, { it.map(encoder).joinToString(delimiter) }, { it.split(delimiter).map(decoder) }, { it.all(validator) })

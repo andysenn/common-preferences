@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class LongPreference(name : String, def : Long) : Preference<Long>(name, def, { it.toString() }, { it.toLong() })
+class LongPreference(name : String, def : Long, validator : (Long) -> Boolean) : Preference<Long>(name, def, { it.toString() }, { it.toLong() }, validator) {
+	constructor(name : String, def : Long) : this(name, def, validAlways)
+}

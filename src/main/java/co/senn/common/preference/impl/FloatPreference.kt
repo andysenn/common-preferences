@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class FloatPreference(name : String, def : Float) : Preference<Float>(name, def, { it.toString() }, { it.toFloat() })
+class FloatPreference(name : String, def : Float, validator : (Float) -> Boolean) : Preference<Float>(name, def, { it.toString() }, { it.toFloat() }, validator) {
+	constructor(name : String, def : Float) : this(name, def, validAlways)
+}

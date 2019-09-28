@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class ShortPreference(name : String, def : Short) : Preference<Short>(name, def, { it.toString() }, { it.toShort() })
+class ShortPreference(name : String, def : Short, validator : (Short) -> Boolean) : Preference<Short>(name, def, { it.toString() }, { it.toShort() }, validator) {
+	constructor(name : String, def : Short) : this(name, def, validAlways)
+}

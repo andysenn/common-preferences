@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class BytePreference(name : String, def : Byte) : Preference<Byte>(name, def, { it.toString() }, { it.toByte() })
+class BytePreference(name : String, def : Byte, validator : (Byte) -> Boolean) : Preference<Byte>(name, def, { it.toString() }, { it.toByte() }, validator) {
+	constructor(name : String, def : Byte) : this(name, def, validAlways)
+}

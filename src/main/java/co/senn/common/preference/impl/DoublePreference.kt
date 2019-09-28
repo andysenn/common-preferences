@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class DoublePreference(name : String, def : Double) : Preference<Double>(name, def, { it.toString() }, { it.toDouble() })
+class DoublePreference(name : String, def : Double, validator : (Double) -> Boolean) : Preference<Double>(name, def, { it.toString() }, { it.toDouble() }, validator) {
+	constructor(name : String, def : Double) : this(name, def, validAlways)
+}

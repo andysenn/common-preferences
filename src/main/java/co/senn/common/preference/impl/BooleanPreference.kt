@@ -1,6 +1,6 @@
 /*-
  * #%L
- * common-preferences
+ * Senn Common: Preferences
  * %%
  * Copyright (C) 2018 Andy Senn
  * %%
@@ -21,4 +21,6 @@ package co.senn.common.preference.impl
 
 import co.senn.common.preference.Preference
 
-class BooleanPreference(name : String, def : Boolean) : Preference<Boolean>(name, def, { it.toString() }, { it.toBoolean() })
+class BooleanPreference(name : String, def : Boolean, validator : (Boolean) -> Boolean) : Preference<Boolean>(name, def, { it.toString() }, { it.toBoolean() }, validator) {
+	constructor(name : String, def : Boolean) : this(name, def, validAlways)
+}

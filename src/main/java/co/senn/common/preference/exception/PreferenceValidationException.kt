@@ -17,24 +17,11 @@
  * limitations under the License.
  * #L%
  */
-package co.senn.common.preference
+package co.senn.common.preference.exception
 
-abstract class Preference<T> protected constructor(
-		val name : String,
-		val default : T,
-		inline val encoder : (T) -> String,
-		inline val decoder : (String) -> T,
-		inline val validator : (T) -> Boolean
-) {
-	
-	internal inline val encodedDefault : String
-		get() = encoder.invoke(default)
-	
-	fun validate(value : T) = validator.invoke(value)
-	
-	companion object {
-		val validAlways : (Any) -> Boolean = { true }
-		val validNever : (Any) -> Boolean = { false }
-	}
-	
-}
+import co.senn.common.preference.Preference
+
+class PreferenceValidationException(
+		val preference : Preference<*>,
+		val value : Any?
+) : RuntimeException("Invalid value for preference '${preference.name}': $value")
